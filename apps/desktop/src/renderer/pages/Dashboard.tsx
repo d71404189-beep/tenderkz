@@ -4,7 +4,7 @@ import {
   SearchOutlined,
   FileTextOutlined,
   TrophyOutlined,
-  PercentOutlined,
+  PieChartOutlined,
   BellOutlined,
   ArrowUpOutlined,
   RightOutlined,
@@ -86,7 +86,7 @@ export default function Dashboard() {
               title={<Text style={{ color: '#64748b', fontSize: 13 }}>Вероятность выигрыша</Text>}
               value={stats.winRate}
               suffix="%"
-              prefix={<PercentOutlined style={{ color: '#f59e0b' }} />}
+              prefix={<PieChartOutlined style={{ color: '#f59e0b' }} />}
               valueStyle={{ color: '#1e293b', fontWeight: 700 }}
             />
           </Card>
