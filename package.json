@@ -2,11 +2,6 @@
   "name": "tenderkz",
   "version": "0.1.0",
   "private": true,
-  "description": "TenderKZ — платформа для победы в госзакупках РК",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
   "scripts": {
     "dev:desktop": "npm run dev --workspace=apps/desktop",
     "dev:api": "npm run start:dev --workspace=apps/api",
