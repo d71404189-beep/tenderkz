@@ -11,7 +11,7 @@
     "db:migrate": "prisma migrate dev",
     "db:generate": "prisma generate",
     "db:seed": "prisma db seed",
-    "postinstall": "prisma generate",
+
     "render-build": "prisma db push --skip-generate && prisma generate",
     "render-start": "node dist/main.js"
   },
@@ -25,6 +25,7 @@
     "@nestjs/throttler": "^6.0.0",
     "@nestjs/schedule": "^4.0.0",
     "@prisma/client": "5.22.0",
+    "prisma": "5.22.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "bcryptjs": "^2.4.3",
@@ -44,7 +45,6 @@
     "@types/passport-jwt": "^4.0.1",
     "@types/bcryptjs": "^2.4.6",
     "@types/uuid": "^10.0.0",
-    "prisma": "5.22.0",
     "typescript": "^5.5.4",
     "ts-node": "^10.9.2"
   },
