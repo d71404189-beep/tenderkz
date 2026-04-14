@@ -1,0 +1,72 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background: #f0f2f5;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d0d5dd;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #98a2b3;
+}
+
+.ant-card {
+  transition: box-shadow 0.2s ease;
+}
+
+.ant-card:hover {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+}
+
+.stat-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  border-color: #1976d2;
+}
+
+.tender-row {
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.tender-row:hover {
+  background: #f0f7ff !important;
+}
+
+.probability-circle {
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.tag-success { background: #ecfdf5; color: #059669; border-color: #a7f3d0; }
+.tag-warning { background: #fffbeb; color: #d97706; border-color: #fde68a; }
+.tag-danger { background: #fef2f2; color: #dc2626; border-color: #fecaca; }

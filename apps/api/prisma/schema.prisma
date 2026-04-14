@@ -1,0 +1,148 @@
+generator client {
+  provider        = "prisma-client-js"
+  binaryTarget   = ["native", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  bin          String?
+  name         String?
+  role         String   @default("user")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  profile       CompanyProfile?
+  notifications Notification[]
+  documents     ApplicationDocument[]
+
+  @@map("users")
+}
+
+model CompanyProfile {
+  id           String   @id @default(uuid())
+  userId       String   @unique @map("user_id")
+  bin          String   @unique
+  name         String
+  directorName String?  @map("director_name")
+  region       String?
+  oked         String?
+  categories   String[] @default([])
+  licenses     Json     @default("[]")
+  certificates Json     @default("[]")
+  experience   Json     @default("[]")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("company_profiles")
+}
+
+model Tender {
+  id              String   @id @default(uuid())
+  externalId      String   @unique @map("external_id")
+  title           String
+  description     String   @default("")
+  customerName    String   @map("customer_name")
+  customerBin     String   @map("customer_bin")
+  categoryKpgz    String?  @map("category_kpgz")
+  categoryKtru    String?  @map("category_ktru")
+  region          String?
+  amount          Decimal  @default(0)
+  currency        String   @default("KZT")
+  type            String
+  status          String   @default("PUBLISHED")
+  publishedAt     DateTime @map("published_at")
+  deadlineAt      DateTime @map("deadline_at")
+  openingAt      DateTime? @map("opening_at")
+  guaranteeAmount Decimal? @map("guarantee_amount")
+  requirements    String   @default("")
+  documents       Json     @default("[]")
+  competitorCount Int      @default(0) @map("competitor_count")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  participants TenderParticipant[]
+  applications  ApplicationDocument[]
+  notifications Notification[]
+
+  @@index([status])
+  @@index([deadlineAt])
+  @@index([categoryKpgz])
+  @@index([region])
+  @@map("tenders")
+}
+
+model TenderParticipant {
+  id           String   @id @default(uuid())
+  tenderId     String   @map("tender_id")
+  supplierBin  String   @map("supplier_bin")
+  supplierName String   @map("supplier_name")
+  isWinner     Boolean  @default(false) @map("is_winner")
+  offeredPrice Decimal? @map("offered_price")
+  discount     Float?   @default(0)
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  tender Tender @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+
+  @@unique([tenderId, supplierBin])
+  @@index([supplierBin])
+  @@map("tender_participants")
+}
+
+model CompetitorProfile {
+  id                String   @id @default(uuid())
+  bin               String   @unique
+  name              String
+  region            String?
+  totalParticipated Int      @default(0) @map("total_participated")
+  totalWon          Int      @default(0) @map("total_won")
+  winRate           Float    @default(0) @map("win_rate")
+  avgDiscount       Float    @default(0) @map("avg_discount")
+  categories        String[] @default([])
+  lastUpdated       DateTime @updatedAt @map("last_updated")
+
+  @@map("competitor_profiles")
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  tenderId  String?  @map("tender_id")
+  type      String
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tender Tender? @relation(fields: [tenderId], references: [id], onDelete: SetNull)
+
+  @@index([userId, read])
+  @@map("notifications")
+}
+
+model ApplicationDocument {
+  id             String   @id @default(uuid())
+  userId         String   @map("user_id")
+  tenderId       String   @map("tender_id")
+  type           String
+  status         String   @default("draft")
+  content        Json?
+  readinessScore Int      @default(0) @map("readiness_score")
+  filePath       String?  @map("file_path")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tender Tender @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+
+  @@map("application_documents")
+}

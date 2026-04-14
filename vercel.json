@@ -1,0 +1,9 @@
+{
+  "buildCommand": "cd apps/desktop && npm install && npx tsc -p tsconfig.json --noEmit 2>/dev/null; vite build --config vite.config.ts --outDir ../../dist",
+  "outputDirectory": "dist",
+  "framework": null,
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "http://localhost:3001/api/$1" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

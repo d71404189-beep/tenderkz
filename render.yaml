@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: tenderkz-api
+    runtime: node
+    plan: free
+    buildCommand: cd apps/api && npm install && npx prisma generate && npm run build
+    startCommand: cd apps/api && node dist/main.js
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: tenderkz-db
+          property: connectionString
+      - key: JWT_SECRET
+        value: tenderkz-prod-secret-2026
+      - key: JWT_EXPIRES_IN
+        value: 72h
+      - key: APP_PORT
+        value: 10000
+      - key: NODE_ENV
+        value: production
+
+databases:
+  - name: tenderkz-db
+    plan: free
+    databaseName: tenderkz
