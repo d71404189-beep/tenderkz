@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
@@ -13,15 +13,15 @@ export default class AuthService {
 
   async register(dto: RegisterDto) {
     const exists = await this.prisma.user.findUnique({ where: { email: dto.email } });
-    if (exists) throw new Error('Email already registered');
+    if (exists) throw new ConflictException('Этот email уже зарегистрирован');
 
     const passwordHash = await bcrypt.hash(dto.password, 12);
     const user = await this.prisma.user.create({
       data: {
         email: dto.email,
         passwordHash,
-        bin: dto.bin,
-        name: dto.name,
+        bin: dto.bin || null,
+        name: dto.name || null,
       },
     });
 
@@ -32,7 +32,7 @@ export default class AuthService {
           bin: dto.bin,
           name: dto.name || '',
         },
-      });
+      }).catch(() => {});
     }
 
     const token = this.jwt.sign({ userId: user.id, email: user.email });
@@ -41,10 +41,10 @@ export default class AuthService {
 
   async login(dto: LoginDto) {
     const user = await this.prisma.user.findUnique({ where: { email: dto.email } });
-    if (!user) throw new Error('Invalid credentials');
+    if (!user) throw new UnauthorizedException('Неверный email или пароль');
 
     const valid = await bcrypt.compare(dto.password, user.passwordHash);
-    if (!valid) throw new Error('Invalid credentials');
+    if (!valid) throw new UnauthorizedException('Неверный email или пароль');
 
     const token = this.jwt.sign({ userId: user.id, email: user.email });
     return { token, user: { id: user.id, email: user.email, name: user.name } };
@@ -55,7 +55,7 @@ export default class AuthService {
       where: { id: userId },
       include: { profile: true },
     });
-    if (!user) throw new Error('User not found');
+    if (!user) throw new NotFoundException('Пользователь не найден');
     const { passwordHash, ...result } = user;
     return result;
   }
